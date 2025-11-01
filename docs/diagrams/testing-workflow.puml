@@ -1,0 +1,89 @@
+@startuml testing-workflow
+!theme plain
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontSize 12
+
+title Testing Workflow - Build to Verification
+
+|Developer|
+start
+:Make code changes;
+
+|Build System|
+:Run **mvn clean package**;
+note right
+  • Compiles code
+  • Packages JAR
+  • Skips tests (fast: ~5s)
+end note
+
+:Build Success?;
+if (yes) then
+  :Generate JAR in target/;
+else (no)
+  |Developer|
+  :Fix compilation errors;
+  stop
+endif
+
+|Developer|
+:Start connector manually;
+note right
+  java -jar target/edc-minimal-poc-1.0.0.jar
+  
+  Verify logs show:
+  ✓ Financial data registered
+  ✓ APIs started on ports
+end note
+
+:Connector running?;
+if (yes) then
+else (no)
+  :Check logs & fix;
+  stop
+endif
+
+|Test Execution|
+fork
+  :Run PowerShell tests\n**.\test-api.ps1**;
+  note right
+    • Get Asset test
+    • Get Policy test
+    • Get Contract test
+  end note
+  :3 tests pass?;
+fork again
+  :Run Integration tests\n**mvn verify**;
+  note right
+    • testConnectorHealth
+    • testGetAsset
+    • testGetPolicy
+    • testGetContractDefinition
+    • testCreateAsset
+    • testGetNonExistentAsset
+  end note
+  :6 tests pass?;
+end fork
+
+if (All tests pass?) then (yes)
+  |Developer|
+  :Review changes;
+  :Commit code;
+  note right
+    git add .
+    git commit -m "Description"
+  end note
+  :Push to repository;
+  stop
+else (no)
+  |Developer|
+  :Debug test failures;
+  :Fix issues;
+  :Restart connector;
+  |Test Execution|
+  :Retry tests;
+  stop
+endif
+
+@enduml

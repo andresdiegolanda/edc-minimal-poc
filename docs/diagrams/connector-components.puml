@@ -1,0 +1,82 @@
+@startuml connector-components
+!theme plain
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontSize 12
+
+title EDC Connector - Internal Components
+
+package "EDC Runtime" {
+  
+  component "Service Loader" as loader
+  
+  package "Core Services" {
+    [Asset Index] as assetIndex
+    [Policy Engine] as policyEngine
+    [Contract Service] as contractService
+    [Transfer Process Manager] as transferMgr
+    [State Machine] as stateMachine
+  }
+  
+  package "Extensions" {
+    [Management API Extension] as mgmtExt
+    [HTTP Provisioner] as httpProv
+    [Sample Data Extension] as sampleExt #lightgreen
+  }
+  
+  package "Storage Layer (In-Memory)" {
+    database "Assets" as assetsDB
+    database "Policies" as policiesDB
+    database "Contracts" as contractsDB
+    database "Transfer Processes" as transferDB
+  }
+  
+  package "API Layer" {
+    [Management API\nController :8181] as mgmtAPI
+    [Public API\nController :8080] as publicAPI
+    [Protocol API\nController :8282] as protocolAPI
+  }
+}
+
+loader --> mgmtExt : load
+loader --> httpProv : load
+loader --> sampleExt : load
+
+sampleExt ..> assetIndex : inject
+sampleExt ..> policyEngine : inject
+sampleExt ..> contractService : inject
+
+mgmtExt --> mgmtAPI : provide
+mgmtExt ..> assetIndex : inject
+mgmtExt ..> policyEngine : inject
+mgmtExt ..> contractService : inject
+
+assetIndex --> assetsDB : persist
+policyEngine --> policiesDB : persist
+contractService --> contractsDB : persist
+transferMgr --> transferDB : persist
+
+stateMachine --> transferMgr : orchestrate
+
+note right of sampleExt
+  <b>Custom Extension (This Project)</b>
+  Registers financial market data:
+  • market-data-2025-q1
+  • financial-research-policy
+  • market-data-contract-def
+end note
+
+note bottom of assetsDB
+  <b>In-Memory Storage</b>
+  Data lost on restart.
+  Use SQL/NoSQL for production.
+end note
+
+note right of mgmtAPI
+  REST APIs for:
+  • Asset CRUD
+  • Policy CRUD
+  • Contract CRUD
+end note
+
+@enduml

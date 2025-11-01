@@ -1,0 +1,76 @@
+@startuml contract-definition
+!theme plain
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontSize 12
+
+title Contract Definition - Linking Assets and Policies
+
+class ContractDefinition {
+  +id: String
+  +accessPolicyId: String
+  +contractPolicyId: String
+  +assetsSelectorCriterion: Criterion
+}
+
+class Criterion {
+  +operandLeft: String
+  +operator: Operator
+  +operandRight: Object
+}
+
+class Asset {
+  +id: String
+  +name: String
+  +properties: Map
+}
+
+class Policy {
+  +id: String
+  +permissions: List
+  +prohibitions: List
+}
+
+ContractDefinition --> Criterion : selects assets via
+ContractDefinition ..> Policy : references\n(accessPolicyId)
+ContractDefinition ..> Policy : enforces\n(contractPolicyId)
+Criterion ..> Asset : matches
+Policy ..> Asset : governs
+
+note right of ContractDefinition
+  <b>market-data-contract-def</b>
+  
+  id: "market-data-contract-def"
+  accessPolicyId: "financial-research-policy"
+  contractPolicyId: "financial-research-policy"
+  
+  Links asset to policy via criterion
+end note
+
+note bottom of Criterion
+  <b>Asset Selection</b>
+  Matches assets where:
+  id = "market-data-2025-q1"
+  
+  Can use operators:
+  • EQUALS
+  • IN
+  • LIKE (pattern matching)
+end note
+
+note left of Asset
+  <b>Selected Asset</b>
+  market-data-2025-q1
+  
+  Matched by criterion
+end note
+
+note left of Policy
+  <b>Applied Policy</b>
+  financial-research-policy
+  
+  • Access control (who can see)
+  • Usage rules (how to use)
+end note
+
+@enduml

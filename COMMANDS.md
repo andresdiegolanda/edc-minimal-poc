@@ -94,8 +94,8 @@ mvn clean package
 # Step 2: Start connector (keep this terminal open)
 java -jar target/edc-minimal-poc-1.0.0.jar
 
-# Step 3: In a NEW terminal, run tests
-mvn test -DskipTests=false
+# Step 3: In a NEW terminal, run integration tests
+mvn verify
 ```
 
 ---
@@ -104,10 +104,10 @@ mvn test -DskipTests=false
 
 | Action | Command |
 |--------|---------|
-| **Build** | `mvn clean package` |
+| **Build** | `mvn clean package` (skips tests) |
 | **Run Connector** | `java -jar target/edc-minimal-poc-1.0.0.jar` |
-| **Run All Tests** | `mvn test -DskipTests=false` |
-| **Run Single Test** | `mvn test -DskipTests=false -Dtest=EdcManagementApiTest#testGetWeatherAsset` |
+| **Run Integration Tests** | `mvn verify` |
+| **Run Single Test** | `mvn verify -Dit.test=EdcManagementApiTest#testGetMarketDataAsset` |
 | **Quick Manual Test** | `.\test-api.ps1` |
 | **Stop Connector** | `Ctrl+C` in the connector terminal |
 
@@ -123,8 +123,8 @@ mvn clean package
 # 2. Start connector in Terminal 1
 java -jar target/edc-minimal-poc-1.0.0.jar
 
-# 3. Open Terminal 2 and run tests
-mvn test -DskipTests=false
+# 3. Open Terminal 2 and run integration tests
+mvn verify
 ```
 
 ### After Code Changes
@@ -137,8 +137,8 @@ mvn clean package
 # 3. Restart connector (Terminal 1)
 java -jar target/edc-minimal-poc-1.0.0.jar
 
-# 4. Re-run tests (Terminal 2)
-mvn test -DskipTests=false
+# 4. Re-run integration tests (Terminal 2)
+mvn verify
 ```
 
 ---
@@ -158,11 +158,11 @@ mvn test -DskipTests=false
 netstat -ano | findstr :8181
 ```
 
-### "BUILD FAILURE: Tests run: 0"
-**Problem:** Tests are being skipped  
-**Solution:** Add `-DskipTests=false`:
+### "BUILD FAILURE: No tests executed"
+**Problem:** Running `mvn test` instead of `mvn verify`  
+**Solution:** Integration tests run with verify phase:
 ```powershell
-mvn test -DskipTests=false
+mvn verify
 ```
 
 ---
@@ -171,7 +171,7 @@ mvn test -DskipTests=false
 
 **Run tests with detailed output:**
 ```powershell
-mvn test -DskipTests=false -X
+mvn verify -X
 ```
 
 **Run only compilation (faster):**

@@ -1,0 +1,82 @@
+@startuml policy-structure
+!theme plain
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontSize 12
+
+title Policy Structure - Financial Research Policy
+
+class Policy {
+  +id: String
+  +permissions: List<Permission>
+  +prohibitions: List<Prohibition>
+  +obligations: List<Duty>
+}
+
+class Permission #lightgreen {
+  +action: Action
+  +constraints: List<Constraint>
+  +duties: List<Duty>
+}
+
+class Prohibition #FFB6C1 {
+  +action: Action
+  +constraints: List<Constraint>
+}
+
+class Duty #lightblue {
+  +action: Action
+  +constraints: List<Constraint>
+}
+
+class Action {
+  +type: String
+}
+
+class Constraint #FFE4B5 {
+  +leftExpression: Expression
+  +operator: Operator
+  +rightExpression: Expression
+}
+
+Policy *-- "1..*" Permission : has
+Policy *-- "0..*" Prohibition : has
+Policy *-- "0..*" Duty : has
+
+Permission *-- "1" Action : allows
+Permission *-- "0..*" Constraint : under
+Permission *-- "0..*" Duty : requires
+
+Prohibition *-- "1" Action : forbids
+Prohibition *-- "0..*" Constraint : when
+
+Duty *-- "1" Action : mandates
+Duty *-- "0..*" Constraint : if
+
+note right of Permission
+  <b>Allows READ action</b>
+  with constraint:
+  purpose = "research"
+end note
+
+note right of Prohibition
+  <b>Forbids DISTRIBUTE</b>
+  Data cannot be shared
+  with third parties
+end note
+
+note right of Duty
+  <b>Requires DELETE</b>
+  after 12 months:
+  elapsed-time > P12M
+end note
+
+note bottom of Constraint
+  <b>Example Constraints:</b>
+  • purpose = "research"
+  • customer_tier = "premium"
+  • region IN ["EU", "US"]
+  • elapsed-time > "P12M"
+end note
+
+@enduml

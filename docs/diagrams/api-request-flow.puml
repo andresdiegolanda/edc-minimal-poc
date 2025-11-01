@@ -1,0 +1,105 @@
+@startuml api-request-flow
+!theme plain
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontSize 12
+
+title API Request Processing Flow
+
+actor Client
+boundary "HTTP Server\n:8181" as server
+control "API Controller" as controller
+entity "Service Layer" as service
+database "Data Store\n(In-Memory)" as db
+
+== GET Request - Retrieve Asset ==
+
+Client -> server : GET /management/v3/assets/\nmarket-data-2025-q1
+activate server
+
+server -> controller : route request
+activate controller
+
+controller -> controller : parse asset ID\nfrom URL
+
+controller -> service : getAsset(id)
+activate service
+
+service -> db : query asset by ID
+activate db
+
+alt Asset Found
+  db --> service : return asset data
+  deactivate db
+  
+  service --> controller : Asset object
+  deactivate service
+  
+  controller -> controller : serialize to JSON
+  
+  controller --> server : 200 OK + JSON body
+  deactivate controller
+  
+  server --> Client : HTTP 200\n{asset details...}
+  
+else Asset Not Found
+  db --> service : null
+  service --> controller : null
+  controller --> server : 404 Not Found
+  server --> Client : HTTP 404\n{error message}
+end
+
+deactivate server
+
+== POST Request - Create Asset ==
+
+Client -> server : POST /management/v3/assets\n+ JSON body
+activate server
+
+server -> controller : route request
+activate controller
+
+controller -> controller : parse JSON body\nto Asset object
+
+controller -> controller : validate asset data\n(id, name, etc.)
+
+alt Validation Success
+  controller -> service : createAsset(asset)
+  activate service
+  
+  service -> db : check if ID exists
+  activate db
+  
+  alt ID Available
+    db --> service : ID not found ✓
+    deactivate db
+    
+    service -> db : insert asset
+    activate db
+    db --> service : asset created ✓
+    deactivate db
+    
+    service --> controller : created asset
+    deactivate service
+    
+    controller --> server : 201 Created
+    deactivate controller
+    
+    server --> Client : HTTP 201\n{created asset...}
+    
+  else ID Conflict
+    db --> service : ID already exists
+    service --> controller : ConflictException
+    controller --> server : 409 Conflict
+    server --> Client : HTTP 409\n{error: "Asset exists"}
+  end
+  
+else Validation Failed
+  controller --> server : 400 Bad Request
+  deactivate controller
+  server --> Client : HTTP 400\n{validation errors}
+end
+
+deactivate server
+
+@enduml

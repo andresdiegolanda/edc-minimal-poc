@@ -1,0 +1,70 @@
+@startuml data-flow-sequence
+!theme plain
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontSize 12
+
+title Data Discovery and Access Flow
+
+actor "Client" as client
+participant "Management API\n:8181" as api
+database "Asset Index" as assets
+database "Policy Store" as policies
+database "Contract Store" as contracts
+
+== Startup Phase ==
+client -> api : Start Connector
+activate api
+api -> assets : Register financial asset
+api -> policies : Register research policy
+api -> contracts : Register contract definition
+api --> client : Connector Ready ✓
+deactivate api
+
+== Discovery Phase ==
+client -> api : GET /assets
+activate api
+api -> assets : Query all assets
+assets --> api : Return asset list
+api --> client : 200 OK\n[{id: "market-data-2025-q1", ...}]
+deactivate api
+
+== Policy Review Phase ==
+client -> api : GET /policydefinitions/\nfinancial-research-policy
+activate api
+api -> policies : Query policy
+policies --> api : Return policy details
+api --> client : 200 OK\n{purpose: "research", ...}
+deactivate api
+
+note right of client
+  Client reviews policy:
+  • Purpose: Research only
+  • Prohibition: No redistribution
+  • Duty: Delete after 12 months
+end note
+
+== Contract Verification Phase ==
+client -> api : GET /contractdefinitions/\nmarket-data-contract-def
+activate api
+api -> contracts : Query contract
+contracts --> api : Return contract definition
+api --> client : 200 OK\n{assetId: "market-data-2025-q1",\npolicyId: "financial-research-policy"}
+deactivate api
+
+== Access Phase ==
+client -> api : Access data\n(via negotiated contract)
+activate api
+api -> policies : Verify policy compliance
+policies --> api : Access granted ✓
+api --> client : 200 OK\n{financial data...}
+deactivate api
+
+note left of api
+  In production, the access phase
+  involves full contract negotiation
+  and transfer protocol.
+  This PoC simplifies for demonstration.
+end note
+
+@enduml

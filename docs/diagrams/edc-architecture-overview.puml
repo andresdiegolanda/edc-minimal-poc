@@ -1,0 +1,59 @@
+@startuml edc-architecture-overview
+!theme plain
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontSize 12
+
+title EDC Financial Market Data Connector - Architecture Overview
+
+package "EDC Connector\n(This Project)" {
+  
+  [Sample Data\nExtension] as ext
+  
+  package "Data Stores" {
+    database "Asset\nIndex" as assets
+    database "Policy\nStore" as policies
+    database "Contract\nStore" as contracts
+  }
+  
+  package "HTTP APIs" {
+    [Management API\n:8181] as mgmt
+    [Public API\n:8080] as public
+    [Protocol API\n:8282] as protocol
+    [IDS API\n:8383] as ids
+    [Control API\n:9191] as control
+  }
+  
+  ext --> assets : registers
+  ext --> policies : registers
+  ext --> contracts : registers
+  
+  mgmt --> assets : CRUD
+  mgmt --> policies : CRUD
+  mgmt --> contracts : CRUD
+}
+
+actor "Client\nApplication" as client
+actor "Admin\nUser" as admin
+actor "Other\nConnector" as other
+
+client --> mgmt : Discovery &\nManagement
+client --> public : Data Access
+admin --> control : Administration
+other --> protocol : Negotiation &\nTransfer
+other --> ids : IDS Protocol
+
+note right of ext
+  Registers financial
+  market data on startup:
+  • Asset: market-data-2025-q1
+  • Policy: financial-research-policy
+  • Contract: market-data-contract-def
+end note
+
+note bottom of mgmt
+  Main API for CRUD operations
+  on assets, policies, and contracts
+end note
+
+@enduml

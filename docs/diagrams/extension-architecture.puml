@@ -1,0 +1,50 @@
+@startuml extension-architecture
+!theme plain
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontSize 12
+
+title EDC Extension Architecture
+
+interface ServiceExtension {
+  +initialize(context)
+  +name(): String
+}
+
+class ServiceExtensionContext {
+  +getMonitor()
+  +getService(class)
+  +registerService(class, instance)
+}
+
+class SampleDataExtension {
+  -assetIndex: AssetIndex
+  -policyStore: PolicyDefinitionStore
+  -contractStore: ContractDefinitionStore
+  --
+  +initialize(context)
+  +name(): String
+}
+
+interface AssetIndex {
+  +create(asset)
+  +findById(id)
+}
+
+interface PolicyDefinitionStore {
+  +create(policy)
+  +findById(id)
+}
+
+interface ContractDefinitionStore {
+  +save(contract)
+  +findById(id)
+}
+
+ServiceExtension <|.. SampleDataExtension
+ServiceExtensionContext ..> SampleDataExtension
+SampleDataExtension ..> AssetIndex
+SampleDataExtension ..> PolicyDefinitionStore
+SampleDataExtension ..> ContractDefinitionStore
+
+@enduml

@@ -1,0 +1,93 @@
+@startuml policy-enforcement
+!theme plain
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontSize 12
+
+title Policy Enforcement During Data Access
+
+actor "Client" as client
+participant "API Gateway" as gateway
+participant "Policy Engine" as engine
+participant "Contract Service" as contract
+database "Policy Store" as policyDB
+database "Asset Store" as assetDB
+participant "Data Provider" as provider
+
+client -> gateway : Request data access\n(asset: market-data-2025-q1)
+activate gateway
+
+gateway -> contract : Verify contract exists
+activate contract
+
+contract -> assetDB : Get asset details
+activate assetDB
+assetDB --> contract : Asset found ✓
+deactivate assetDB
+
+contract -> policyDB : Get policy for asset
+activate policyDB
+policyDB --> contract : financial-research-policy
+deactivate policyDB
+
+contract --> gateway : Contract + Policy
+deactivate contract
+
+gateway -> engine : Evaluate policy
+activate engine
+
+engine -> engine : Check permissions\n(action: USE)
+
+alt Permission: USE allowed
+  engine -> engine : Evaluate constraints\n(purpose = "research")
+  
+  alt Client purpose = "research"
+    engine -> engine : Check prohibitions\n(no DISTRIBUTE)
+    
+    alt Client complies
+      engine -> engine : Verify duties\n(DELETE after 12M)
+      
+      alt All rules satisfied
+        engine --> gateway : ACCESS GRANTED ✓
+        deactivate engine
+        
+        gateway -> provider : Fetch data
+        activate provider
+        provider --> gateway : Financial data
+        deactivate provider
+        
+        gateway --> client : 200 OK\n{financial data...}
+        
+      else Duty violation
+        engine --> gateway : ACCESS DENIED\n(Duty not met)
+        gateway --> client : 403 Forbidden\n{error: "Duty violation"}
+      end
+      
+    else Prohibition violated
+      engine --> gateway : ACCESS DENIED\n(Redistribution attempt)
+      gateway --> client : 403 Forbidden\n{error: "Prohibited action"}
+    end
+    
+  else Wrong purpose
+    engine --> gateway : ACCESS DENIED\n(Purpose constraint)
+    gateway --> client : 403 Forbidden\n{error: "Purpose not allowed"}
+  end
+  
+else Permission denied
+  engine --> gateway : ACCESS DENIED\n(No USE permission)
+  gateway --> client : 403 Forbidden\n{error: "No permission"}
+end
+
+deactivate gateway
+
+note right of engine
+  <b>Policy Evaluation Order:</b>
+  1. Check permissions (allow actions)
+  2. Evaluate constraints (conditions)
+  3. Check prohibitions (deny actions)
+  4. Verify duties (obligations)
+  
+  Access granted only if ALL checks pass
+end note
+
+@enduml

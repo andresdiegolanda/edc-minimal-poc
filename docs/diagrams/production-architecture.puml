@@ -1,0 +1,140 @@
+@startuml production-architecture
+!theme plain
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontSize 12
+
+title Production Deployment Architecture
+
+cloud "Internet" {
+  actor "Clients" as clients
+  actor "Partner\nConnectors" as partners
+}
+
+rectangle "Azure/AWS Cloud" {
+  
+  node "Load Balancer" as lb {
+    [Azure App Gateway\n/ AWS ALB] as alb
+  }
+  
+  node "EDC Connector Cluster" {
+    [EDC Instance 1\n:8080-8383] as edc1
+    [EDC Instance 2\n:8080-8383] as edc2
+    [EDC Instance 3\n:8080-8383] as edc3
+  }
+  
+  node "Data Persistence" {
+    database "PostgreSQL\n(Assets, Policies)" as db
+    database "Redis\n(Cache)" as cache
+  }
+  
+  node "Storage Layer" {
+    storage "Blob Storage\n(Financial Data)" as blob
+    storage "S3 Bucket\n(Archives)" as s3
+  }
+  
+  node "Security Services" {
+    [Azure Key Vault\n/ AWS Secrets Manager] as vault
+    [OAuth2 Provider\n(Azure AD / Cognito)] as oauth
+    [Certificate Manager] as cert
+  }
+  
+  node "Observability" {
+    [Prometheus\n(Metrics)] as prometheus
+    [Grafana\n(Dashboards)] as grafana
+    [ELK Stack\n(Logs)] as elk
+    [Jaeger\n(Tracing)] as jaeger
+  }
+  
+  node "Message Queue" {
+    queue "Kafka\n/ Service Bus" as kafka
+  }
+}
+
+clients --> alb : HTTPS :443
+partners --> alb : HTTPS :443
+
+alb --> edc1 : TLS
+alb --> edc2 : TLS
+alb --> edc3 : TLS
+
+edc1 --> db : SQL\n(assets, policies)
+edc2 --> db
+edc3 --> db
+
+edc1 --> cache : Cache queries
+edc2 --> cache
+edc3 --> cache
+
+edc1 --> blob : Fetch data
+edc2 --> blob
+edc3 --> s3
+
+edc1 ..> vault : Get secrets
+edc2 ..> vault
+edc3 ..> vault
+
+edc1 ..> oauth : Validate tokens
+edc2 ..> oauth
+edc3 ..> oauth
+
+edc1 ..> cert : TLS certs
+edc2 ..> cert
+edc3 ..> cert
+
+edc1 --> prometheus : Metrics
+edc2 --> prometheus
+edc3 --> prometheus
+
+edc1 --> elk : Logs
+edc2 --> elk
+edc3 --> elk
+
+edc1 --> jaeger : Traces
+edc2 --> jaeger
+edc3 --> jaeger
+
+edc1 --> kafka : Events
+edc2 --> kafka
+edc3 --> kafka
+
+prometheus --> grafana : Visualize
+
+note right of edc1
+  <b>EDC Configuration:</b>
+  • TLS enabled on all ports
+  • OAuth2 authentication
+  • Rate limiting
+  • Circuit breakers
+  • Health checks
+end note
+
+note bottom of db
+  <b>Production Database:</b>
+  • High availability (replicas)
+  • Automated backups
+  • Point-in-time recovery
+  • Encryption at rest
+  • SSL connections
+end note
+
+note left of vault
+  <b>Secrets Management:</b>
+  • Database credentials
+  • API keys
+  • TLS certificates
+  • OAuth client secrets
+  • Encryption keys
+end note
+
+note right of prometheus
+  <b>Monitoring Metrics:</b>
+  • Request rates
+  • Error rates
+  • Latency percentiles
+  • Contract negotiations
+  • Policy evaluations
+  • Resource usage
+end note
+
+@enduml

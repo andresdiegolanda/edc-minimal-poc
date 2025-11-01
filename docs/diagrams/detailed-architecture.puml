@@ -1,0 +1,126 @@
+@startuml detailed-architecture
+!theme plain
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontSize 11
+
+title Detailed System Architecture - EDC Financial Market Data Connector
+
+package "EDC Connector Runtime" {
+  
+  rectangle "Bootstrap Layer" {
+    [MinimalEdcConnector\n(Main Class)] as main
+    [Service Loader] as loader
+  }
+  
+  rectangle "Extension Layer" {
+    [Management API\nExtension] as mgmtExt
+    [HTTP Provisioner\nExtension] as httpExt
+    [Sample Data\nExtension] as sampleExt #lightgreen
+  }
+  
+  rectangle "Core Services" {
+    [Asset Index\nService] as assetSvc
+    [Policy Definition\nService] as policySvc
+    [Contract Definition\nService] as contractSvc
+    [Transfer Process\nManager] as transferSvc
+    [State Machine] as stateMachine
+    [Policy Engine] as policyEngine
+  }
+  
+  rectangle "HTTP API Layer" {
+    [Management API\nController\n:8181] as mgmtAPI #lightblue
+    [Public API\nController\n:8080] as publicAPI
+    [Protocol API\nController\n:8282] as protocolAPI
+    [IDS API\nController\n:8383] as idsAPI
+    [Control API\nController\n:9191] as controlAPI
+  }
+  
+  rectangle "Storage Layer (In-Memory)" {
+    database "Asset\nIndex" as assetDB
+    database "Policy Definition\nStore" as policyDB
+    database "Contract Definition\nStore" as contractDB
+    database "Transfer Process\nStore" as transferDB
+  }
+  
+  rectangle "Data Plane (Simulated)" {
+    [HTTP Data Source\n(Financial Data)] as dataSource
+  }
+}
+
+actor "Client Application" as client
+actor "Admin User" as admin
+actor "Other EDC Connector" as otherEDC
+
+main --> loader : initialize
+loader --> mgmtExt : load
+loader --> httpExt : load
+loader --> sampleExt : load
+
+sampleExt ..> assetSvc : inject & use
+sampleExt ..> policySvc : inject & use
+sampleExt ..> contractSvc : inject & use
+
+mgmtExt --> mgmtAPI : register
+httpExt ..> dataSource : provide access
+
+assetSvc --> assetDB : persist
+policySvc --> policyDB : persist
+contractSvc --> contractDB : persist
+transferSvc --> transferDB : persist
+
+mgmtAPI ..> assetSvc : use
+mgmtAPI ..> policySvc : use
+mgmtAPI ..> contractSvc : use
+
+publicAPI ..> assetSvc : query
+publicAPI ..> policyEngine : enforce
+publicAPI ..> dataSource : fetch
+
+protocolAPI ..> transferSvc : manage
+idsAPI ..> contractSvc : negotiate
+controlAPI ..> stateMachine : control
+
+client --> mgmtAPI : Discovery &\nManagement
+client --> publicAPI : Data Access
+admin --> controlAPI : Administration
+otherEDC --> protocolAPI : Negotiation
+otherEDC --> idsAPI : IDS Protocol
+
+note right of sampleExt
+  <b>Custom Extension</b>
+  Runs on startup to register:
+  
+  1. Asset: market-data-2025-q1
+  2. Policy: financial-research-policy
+  3. Contract: market-data-contract-def
+end note
+
+note bottom of assetDB
+  <b>In-Memory Storage</b>
+  • Fast access
+  • No persistence
+  • Data lost on restart
+  
+  Production: Use PostgreSQL
+end note
+
+note right of mgmtAPI
+  <b>Primary API</b>
+  CRUD operations for:
+  • Assets
+  • Policy Definitions
+  • Contract Definitions
+  • Catalog queries
+end note
+
+note left of dataSource
+  <b>Simulated Data</b>
+  In production, this would be:
+  • Database connection
+  • S3/Blob storage
+  • External API
+  • File system
+end note
+
+@enduml

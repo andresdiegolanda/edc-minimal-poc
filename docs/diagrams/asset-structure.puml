@@ -1,0 +1,65 @@
+@startuml asset-structure
+!theme plain
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontSize 12
+
+title Asset Structure in EDC
+
+class Asset {
+  --Core Properties--
+  +id: String
+  +name: String
+  +description: String
+  +contentType: String
+  +version: String
+  --Custom Properties--
+  +properties: Map<String, Object>
+  --Data Location--
+  +dataAddress: DataAddress
+}
+
+class DataAddress {
+  +type: String
+  +properties: Map<String, Object>
+}
+
+class Properties {
+  asset_class: String
+  update_frequency: String
+  coverage: String
+  time_period: String
+}
+
+Asset *-- DataAddress : contains
+Asset *-- Properties : has
+
+note right of Asset
+  <b>Example: Financial Market Data</b>
+  id: "market-data-2025-q1"
+  name: "Equity Price Feed - Q1 2025"
+  description: "Real-time equity prices..."
+  contentType: "application/json"
+end note
+
+note right of DataAddress
+  <b>Specifies where data lives</b>
+  type: "HttpData"
+  baseUrl: "https://api.example.com/..."
+  
+  Can also be:
+  • S3
+  • AzureBlob
+  • Database
+end note
+
+note bottom of Properties
+  <b>Custom metadata</b>
+  Any key-value pairs relevant
+  to the asset domain:
+  • asset_class: "equity"
+  • update_frequency: "real-time"
+  • coverage: "global exchanges"
+end note
+
+@enduml
