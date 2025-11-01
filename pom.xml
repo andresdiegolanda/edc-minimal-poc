@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example.edc</groupId>
+    <artifactId>edc-minimal-poc</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>EDC Minimal PoC</name>
+    <description>A minimal runnable Proof of Concept for Eclipse Dataspace Components</description>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        
+        <!-- EDC version - using the latest stable release -->
+        <edc.version>0.8.1</edc.version>
+        
+        <!-- Other dependencies -->
+        <slf4j.version>2.0.9</slf4j.version>
+        <logback.version>1.4.11</logback.version>
+    </properties>
+
+    <dependencies>
+        <!-- 
+            EDC CORE MODULES
+            These are the fundamental building blocks of an EDC connector
+        -->
+        
+        <!-- Connector Core: Provides base dependencies for EDC runtime -->
+        <dependency>
+            <groupId>org.eclipse.edc</groupId>
+            <artifactId>connector-core</artifactId>
+            <version>${edc.version}</version>
+        </dependency>
+
+        <!-- Boot: Initializes the EDC runtime -->
+        <dependency>
+            <groupId>org.eclipse.edc</groupId>
+            <artifactId>boot</artifactId>
+            <version>${edc.version}</version>
+        </dependency>
+
+        <!-- Control Plane Core: Manages data space operations like contracts and negotiations -->
+        <dependency>
+            <groupId>org.eclipse.edc</groupId>
+            <artifactId>control-plane-core</artifactId>
+            <version>${edc.version}</version>
+        </dependency>
+
+        <!-- Data Plane Core: Handles actual data transfer -->
+        <dependency>
+            <groupId>org.eclipse.edc</groupId>
+            <artifactId>data-plane-core</artifactId>
+            <version>${edc.version}</version>
+        </dependency>
+
+        <!-- Configuration: File-based configuration system -->
+        <dependency>
+            <groupId>org.eclipse.edc</groupId>
+            <artifactId>configuration-filesystem</artifactId>
+            <version>${edc.version}</version>
+        </dependency>
+
+        <!-- Management API: REST API for managing the connector -->
+        <dependency>
+            <groupId>org.eclipse.edc</groupId>
+            <artifactId>management-api</artifactId>
+            <version>${edc.version}</version>
+        </dependency>
+
+        <!-- DSP (Dataspace Protocol): Protocol for connector-to-connector communication -->
+        <dependency>
+            <groupId>org.eclipse.edc</groupId>
+            <artifactId>dsp</artifactId>
+            <version>${edc.version}</version>
+        </dependency>
+
+        <!-- HTTP Data Plane: Transfer data via HTTP -->
+        <dependency>
+            <groupId>org.eclipse.edc</groupId>
+            <artifactId>data-plane-http</artifactId>
+            <version>${edc.version}</version>
+        </dependency>
+
+        <!-- Identity and Access Management -->
+        <dependency>
+            <groupId>org.eclipse.edc</groupId>
+            <artifactId>iam-mock</artifactId>
+            <version>${edc.version}</version>
+        </dependency>
+
+        <!-- Data Plane Signaling for connector communication -->
+        <dependency>
+            <groupId>org.eclipse.edc</groupId>
+            <artifactId>data-plane-signaling-api</artifactId>
+            <version>${edc.version}</version>
+        </dependency>
+
+        <!-- Data Plane Signaling Client for control plane to data plane communication -->
+        <dependency>
+            <groupId>org.eclipse.edc</groupId>
+            <artifactId>data-plane-signaling-client</artifactId>
+            <version>${edc.version}</version>
+        </dependency>
+
+        <!-- Control Plane API Client - provides transfer process client -->
+        <dependency>
+            <groupId>org.eclipse.edc</groupId>
+            <artifactId>control-plane-api-client</artifactId>
+            <version>${edc.version}</version>
+        </dependency>
+
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+
+        <!-- 
+            TESTING DEPENDENCIES
+            These are used ONLY for testing, not included in the runtime JAR
+        -->
+        
+        <!-- JUnit 5 (Jupiter) - Modern testing framework -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <!-- Jackson for JSON parsing - required by EDC at runtime and tests -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.17.2</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
+            </plugin>
+
+            <!-- Maven Surefire Plugin - Runs unit tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.2</version>
+                <configuration>
+                    <!-- Skip tests by default since they require running connector -->
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+
+            <!-- Create a fat JAR with all dependencies -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.example.edc.MinimalEdcConnector</mainClass>
+                                </transformer>
+                                <!-- Merge service files from all JARs (required for Java SPI) -->
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            </transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
