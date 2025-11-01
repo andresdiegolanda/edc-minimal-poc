@@ -33,21 +33,21 @@ EDC Connector Started Successfully!
 Open a new PowerShell window and test the APIs:
 
 ```powershell
-# Test 1: Get the sample weather asset
-Invoke-RestMethod -Uri "http://localhost:8181/api/management/v3/assets/weather-api-asset" -Method GET
+# Test 1: Get the sample market data asset
+Invoke-RestMethod -Uri "http://localhost:8181/api/management/v3/assets/market-data-2025-q1" -Method GET
 
 # Test 2: Get the sample policy
-Invoke-RestMethod -Uri "http://localhost:8181/api/management/v3/policydefinitions/allow-all-policy" -Method GET
+Invoke-RestMethod -Uri "http://localhost:8181/api/management/v3/policydefinitions/financial-research-policy" -Method GET
 
 # Test 3: Get the sample contract definition
-Invoke-RestMethod -Uri "http://localhost:8181/api/management/v3/contractdefinitions/weather-contract-def" -Method GET
+Invoke-RestMethod -Uri "http://localhost:8181/api/management/v3/contractdefinitions/market-data-contract-def" -Method GET
 ```
 
 **Expected Output for Test 1:**
 ```
-@id         : weather-api-asset
+@id         : market-data-2025-q1
 @type       : Asset
-properties  : @{name=Public Weather API; description=Provides current weather data...}
+properties  : @{name=Market Data API; description=Real-time equity price feed...}
 dataAddress : @{@type=DataAddress; type=HttpData}
 ```
 
@@ -57,8 +57,8 @@ dataAddress : @{@type=DataAddress; type=HttpData}
 
 You now have:
 - ✅ A running EDC connector
-- ✅ A sample "Weather API" asset
-- ✅ An "allow-all" policy
+- ✅ A sample "Market Data API" asset for financial data
+- ✅ A "financial-research-policy" with usage constraints
 - ✅ A contract definition linking them
 
 ### Step 5: Explore the Code (As long as you want!)
@@ -123,10 +123,10 @@ Want to see professional API testing in action?
 ```powershell
 # Make sure connector is running first!
 # Then in a new terminal:
-mvn test -DskipTests=false
+mvn verify
 ```
 
-This runs a comprehensive test suite that:
+This runs a comprehensive integration test suite that:
 - ✅ Verifies all endpoints are working
 - ✅ Tests asset creation/retrieval
 - ✅ Validates policies and contracts

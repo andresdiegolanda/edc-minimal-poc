@@ -75,7 +75,7 @@ public class MinimalEdcConnector {
 		System.out.println("- DSP Protocol: http://localhost:8282/api/dsp/*");
 		System.out.println("");
 		System.out.println("Quick test - Get sample asset:");
-		System.out.println("  Invoke-RestMethod -Uri 'http://localhost:8181/api/management/v3/assets/weather-api-asset'");
+		System.out.println("  Invoke-RestMethod -Uri 'http://localhost:8181/api/management/v3/assets/market-data-2025-q1'");
 		System.out.println("");
 		System.out.println("Or run full test suite: .\\test-api.ps1");
 		System.out.println("");

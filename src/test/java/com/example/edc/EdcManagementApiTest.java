@@ -65,7 +65,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("EDC Management API Integration Tests")
-public class EdcManagementApiTest {
+class EdcManagementApiTest {
 
     // =============================================================================
     // TEST CONFIGURATION
@@ -193,7 +193,7 @@ public class EdcManagementApiTest {
         
         // Try to reach ANY endpoint to verify connector is running
         // We use the assets endpoint because we know it exists
-        HttpRequest request = buildGetRequest("/v3/assets/weather-api-asset");
+        HttpRequest request = buildGetRequest("/v3/assets/market-data-2025-q1");
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         
         // We just want to verify we get SOME response (not a connection error)
@@ -211,7 +211,7 @@ public class EdcManagementApiTest {
     // =============================================================================
     
     /**
-     * TEST: Can we retrieve the sample "weather-api-asset"?
+     * TEST: Can we retrieve the sample "market-data-2025-q1" asset?
      * 
      * WHAT THIS TESTS:
      * - Asset retrieval via GET request
@@ -234,12 +234,12 @@ public class EdcManagementApiTest {
      */
     @Test
     @Order(2)
-    @DisplayName("2. GET Asset - Retrieve weather-api-asset")
-    void testGetWeatherAsset() throws Exception {
-        System.out.println("   Retrieving weather-api-asset...");
+    @DisplayName("2. GET Asset - Retrieve market-data-2025-q1")
+    void testGetMarketDataAsset() throws Exception {
+        System.out.println("   Retrieving market-data-2025-q1...");
         
         // Build GET request to specific asset endpoint
-        HttpRequest request = buildGetRequest("/v3/assets/weather-api-asset");
+        HttpRequest request = buildGetRequest("/v3/assets/market-data-2025-q1");
         
         // Send request and get response as String
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -257,7 +257,7 @@ public class EdcManagementApiTest {
         
         // ASSERTION 2: Check asset ID
         // JSON path: json["@id"]
-        assertEquals("weather-api-asset", json.get("@id").asText(), 
+        assertEquals("market-data-2025-q1", json.get("@id").asText(), 
                 "Asset ID should match");
         
         // ASSERTION 3: Check asset type
@@ -283,7 +283,7 @@ public class EdcManagementApiTest {
     // =============================================================================
     
     /**
-     * TEST: Can we retrieve the "allow-all-policy"?
+     * TEST: Can we retrieve the "financial-research-policy"?
      * 
      * WHAT THIS TESTS:
      * - Policy retrieval via GET request
@@ -296,21 +296,21 @@ public class EdcManagementApiTest {
      * - Prohibitions: What actions are forbidden
      * - Obligations: What must be done (logging, payment, etc.)
      * 
-     * The "allow-all-policy" is a permissive policy with no restrictions.
-     * In production, you'd have real policies with constraints.
+     * The "financial-research-policy" represents typical financial data constraints:
+     * - Usage purpose: Research and portfolio analytics
+     * - Prohibition: No redistribution
+     * - Obligation: Delete after 12 months
      * 
      * EDC API PATTERN:
-     * GET /v2/policydefinitions/{policy-id}
-     * Note: v2 not v3 - policies use older API version
+     * GET /v3/policydefinitions/{policy-id}
      */
     @Test
     @Order(3)
-    @DisplayName("3. GET Policy - Retrieve allow-all-policy")
-    void testGetAllowAllPolicy() throws Exception {
-        System.out.println("   Retrieving allow-all-policy...");
+    @DisplayName("3. GET Policy - Retrieve financial-research-policy")
+    void testGetFinancialResearchPolicy() throws Exception {
+        System.out.println("   Retrieving financial-research-policy...");
         
-        // Note: Policy endpoint is v2, not v3
-        HttpRequest request = buildGetRequest("/v2/policydefinitions/allow-all-policy");
+        HttpRequest request = buildGetRequest("/v3/policydefinitions/financial-research-policy");
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         
         System.out.println("   Status: " + response.statusCode());
@@ -323,7 +323,7 @@ public class EdcManagementApiTest {
         JsonNode json = objectMapper.readTree(response.body());
         
         // Check policy ID
-        assertEquals("allow-all-policy", json.get("@id").asText(), 
+        assertEquals("financial-research-policy", json.get("@id").asText(), 
                 "Policy ID should match");
         
         // Check it's a PolicyDefinition
@@ -342,7 +342,7 @@ public class EdcManagementApiTest {
     // =============================================================================
     
     /**
-     * TEST: Can we retrieve the "weather-contract-def"?
+     * TEST: Can we retrieve the "market-data-contract-def"?
      * 
      * WHAT THIS TESTS:
      * - Contract definition retrieval
@@ -362,15 +362,15 @@ public class EdcManagementApiTest {
      * Each one represents an offer they can negotiate.
      * 
      * EDC API PATTERN:
-     * GET /v2/contractdefinitions/{contract-id}
+     * GET /v3/contractdefinitions/{contract-id}
      */
     @Test
     @Order(4)
-    @DisplayName("4. GET Contract Definition - Retrieve weather-contract-def")
+    @DisplayName("4. GET Contract Definition - Retrieve market-data-contract-def")
     void testGetContractDefinition() throws Exception {
-        System.out.println("   Retrieving weather-contract-def...");
+        System.out.println("   Retrieving market-data-contract-def...");
         
-        HttpRequest request = buildGetRequest("/v2/contractdefinitions/weather-contract-def");
+        HttpRequest request = buildGetRequest("/v3/contractdefinitions/market-data-contract-def");
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         
         System.out.println("   Status: " + response.statusCode());
@@ -381,7 +381,7 @@ public class EdcManagementApiTest {
         JsonNode json = objectMapper.readTree(response.body());
         
         // Verify contract ID
-        assertEquals("weather-contract-def", json.get("@id").asText(), 
+        assertEquals("market-data-contract-def", json.get("@id").asText(), 
                 "Contract definition ID should match");
         
         // IMPORTANT: Check policy links
@@ -391,17 +391,17 @@ public class EdcManagementApiTest {
         assertTrue(json.has("contractPolicyId"), 
                 "Contract definition must have contract policy");
         
-        // Verify it links to our allow-all-policy
+        // Verify it links to our financial-research-policy
         String accessPolicy = json.get("accessPolicyId").asText();
         String contractPolicy = json.get("contractPolicyId").asText();
         
         System.out.println("   Access Policy: " + accessPolicy);
         System.out.println("   Contract Policy: " + contractPolicy);
         
-        assertEquals("allow-all-policy", accessPolicy, 
-                "Should link to allow-all-policy for access");
-        assertEquals("allow-all-policy", contractPolicy, 
-                "Should link to allow-all-policy for contract");
+        assertEquals("financial-research-policy", accessPolicy, 
+                "Should link to financial-research-policy for access");
+        assertEquals("financial-research-policy", contractPolicy, 
+                "Should link to financial-research-policy for contract");
         
         System.out.println("   ✓ Contract definition retrieved and validated!");
     }
@@ -450,14 +450,17 @@ public class EdcManagementApiTest {
     void testCreateAsset() throws Exception {
         System.out.println("   Creating new test asset...");
         
+        // Use timestamp to ensure unique asset ID for each test run
+        String assetId = "test-asset-" + System.currentTimeMillis();
+        
         // Define the new asset in JSON-LD format
         // This is what we'll send in the POST body
-        String newAssetJson = """
+        String newAssetJson = String.format("""
         {
           "@context": {
             "edc": "https://w3id.org/edc/v0.0.1/ns/"
           },
-          "@id": "test-asset-12345",
+          "@id": "%s",
           "properties": {
             "name": "Test Asset Created by JUnit",
             "description": "This asset was created programmatically via the Management API",
@@ -470,7 +473,7 @@ public class EdcManagementApiTest {
             "baseUrl": "https://jsonplaceholder.typicode.com/posts"
           }
         }
-        """;
+        """, assetId);
         
         System.out.println("   Request Body:");
         System.out.println(newAssetJson);
@@ -491,7 +494,7 @@ public class EdcManagementApiTest {
         // Now verify the asset was created by retrieving it
         System.out.println("   Verifying asset was created...");
         
-        HttpRequest getRequest = buildGetRequest("/v3/assets/test-asset-12345");
+        HttpRequest getRequest = buildGetRequest("/v3/assets/" + assetId);
         HttpResponse<String> getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
         
         assertEquals(200, getResponse.statusCode(), 
@@ -500,7 +503,7 @@ public class EdcManagementApiTest {
         // Parse and validate the retrieved asset
         JsonNode json = objectMapper.readTree(getResponse.body());
         
-        assertEquals("test-asset-12345", json.get("@id").asText(),
+        assertEquals(assetId, json.get("@id").asText(),
                 "Retrieved asset should have correct ID");
         
         String name = json.get("properties").get("name").asText();

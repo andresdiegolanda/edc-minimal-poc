@@ -4,6 +4,8 @@
 
 **Eclipse Dataspace Components (EDC)** is an open-source framework for building **data space connectors**. These connectors enable secure, sovereign data sharing between organizations.
 
+**This PoC simulates secure data-sharing between a financial data provider and an investment-research consumer using EDC.** It demonstrates how financial market data can be shared with policy controls for research purposes while preventing unauthorized redistribution.
+
 ### Key Concepts for Beginners
 
 #### 🌐 Data Space
@@ -59,36 +61,38 @@ A formal agreement between data provider and consumer that specifies:
 ### How EDC Works (Simplified)
 
 ```
-┌─────────────┐                                    ┌─────────────┐
-│  Provider   │                                    │  Consumer   │
-│  Connector  │                                    │  Connector  │
-└──────┬──────┘                                    └──────┬──────┘
-       │                                                  │
-       │ 1. Publishes Asset + Policy                     │
-       │    "Weather API with Allow-All Policy"          │
-       │                                                  │
-       │ 2. ←────────────────────────────────────────────┤
-       │    Consumer requests catalog                    │
-       │    "What data do you have?"                     │
-       │                                                  │
-       ├──────────────────────────────────────────────→  │
-       │ 3. Returns catalog with available assets        │
-       │                                                  │
-       │ 4. ←────────────────────────────────────────────┤
-       │    Consumer initiates contract negotiation      │
-       │    "I want access to Weather API"               │
-       │                                                  │
-       ├──────────────────────────────────────────────→  │
-       │ 5. Verifies policy, creates contract            │
-       │    "Agreement created: Contract #123"           │
-       │                                                  │
-       │ 6. ←────────────────────────────────────────────┤
-       │    Consumer requests data transfer              │
-       │    "Start transfer using Contract #123"         │
-       │                                                  │
-       ├──────────────────────────────────────────────→  │
-       │ 7. Data flows through data plane                │
-       │                                                  │
+┌─────────────────────┐                              ┌─────────────────────┐
+│  Data Provider      │                              │  Research Consumer  │
+│  Connector          │                              │  Connector          │
+│  (Market Data Feed) │                              │  (Investment Firm)  │
+└──────────┬──────────┘                              └──────────┬──────────┘
+           │                                                    │
+           │ 1. Publishes Asset + Policy                       │
+           │    "Market Data Q1 2025 for research use"         │
+           │                                                    │
+           │ 2. ←──────────────────────────────────────────────┤
+           │    Consumer requests catalog                      │
+           │    "What financial data do you have?"             │
+           │                                                    │
+           ├────────────────────────────────────────────────→  │
+           │ 3. Returns catalog with available assets          │
+           │                                                    │
+           │ 4. ←──────────────────────────────────────────────┤
+           │    Consumer initiates contract negotiation        │
+           │    "I want access to Market Data for research"    │
+           │                                                    │
+           ├────────────────────────────────────────────────→  │
+           │ 5. Verifies policy, creates contract              │
+           │    "Agreement created: Contract #123"             │
+           │    "Purpose: portfolio-analytics"                 │
+           │                                                    │
+           │ 6. ←──────────────────────────────────────────────┤
+           │    Consumer requests data transfer                │
+           │    "Start transfer using Contract #123"           │
+           │                                                    │
+           ├────────────────────────────────────────────────→  │
+           │ 7. Market data flows through data plane           │
+           │                                                    │
 ```
 
 ## 🏗️ Project Structure
@@ -165,7 +169,7 @@ Available endpoints:
 
 ### 1. List Assets
 
-The `SampleDataExtension` automatically creates a sample "Weather API" asset when the connector starts.
+The `SampleDataExtension` automatically creates a sample "Market Data API" asset when the connector starts.
 
 ```powershell
 # List all assets
@@ -176,14 +180,16 @@ Expected response (JSON):
 ```json
 [
   {
-    "@id": "weather-api-asset",
+    "@id": "market-data-2025-q1",
     "@type": "Asset",
     "properties": {
-      "name": "Public Weather API",
-      "description": "Provides current weather data for cities worldwide",
+      "name": "Market Data API",
+      "description": "Real-time equity price feed for Q1 2025",
       "contentType": "application/json",
       "type": "API",
-      "category": "weather"
+      "category": "financial-market",
+      "assetClass": "equities",
+      "region": "global"
     }
   }
 ]
@@ -194,14 +200,14 @@ Expected response (JSON):
 Get the pre-loaded sample resources:
 
 ```powershell
-# Get the weather API asset
-Invoke-RestMethod -Uri "http://localhost:8181/api/management/v3/assets/weather-api-asset" -Method GET
+# Get the market data asset
+Invoke-RestMethod -Uri "http://localhost:8181/api/management/v3/assets/market-data-2025-q1" -Method GET
 
-# Get the allow-all policy
-Invoke-RestMethod -Uri "http://localhost:8181/api/management/v3/policydefinitions/allow-all-policy" -Method GET
+# Get the financial research policy
+Invoke-RestMethod -Uri "http://localhost:8181/api/management/v3/policydefinitions/financial-research-policy" -Method GET
 
 # Get the contract definition
-Invoke-RestMethod -Uri "http://localhost:8181/api/management/v3/contractdefinitions/weather-contract-def" -Method GET
+Invoke-RestMethod -Uri "http://localhost:8181/api/management/v3/contractdefinitions/market-data-contract-def" -Method GET
 ```
 
 ### 3. Request Catalog

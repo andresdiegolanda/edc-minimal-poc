@@ -172,8 +172,29 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.2</version>
                 <configuration>
-                    <!-- Skip tests by default since they require running connector -->
-                    <skipTests>true</skipTests>
+                    <!-- Skip unit tests (we only have integration tests) -->
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
+            <!-- Integration tests run separately with mvn verify -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.2.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- Integration tests require running connector -->
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
                 </configuration>
             </plugin>
 

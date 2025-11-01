@@ -43,8 +43,8 @@ import org.eclipse.edc.spi.system.ServiceExtensionContext;
  * 
  * What We're Creating:
  * -------------------
- * 1. A sample ASSET (a weather API)
- * 2. A sample POLICY (allowing any use)
+ * 1. A sample ASSET (financial market data API)
+ * 2. A sample POLICY (research use with restrictions)
  * 3. A CONTRACT DEFINITION (linking the asset and policy)
  */
 public class SampleDataExtension implements ServiceExtension {
@@ -110,26 +110,28 @@ public class SampleDataExtension implements ServiceExtension {
      * 
      * In this example:
      * ---------------
-     * We're registering a "Weather API" that points to a public weather service.
-     * In a real scenario, this could be your own internal API or database.
+     * We're registering a "Market Data API" that provides financial market data.
+     * In a real scenario, this could be your own Bloomberg terminal, Reuters feed, or proprietary database.
      */
     private void registerSampleAsset(org.eclipse.edc.spi.monitor.Monitor monitor) {
-        monitor.info("Creating sample asset: Weather API");
+        monitor.info("Creating sample asset: Market Data API");
 
         // Build the asset with metadata
         var asset = Asset.Builder.newInstance()
-                .id("weather-api-asset")  // Unique ID for this asset
-                .name("Public Weather API")  // Human-readable name
-                .description("Provides current weather data for cities worldwide")
+                .id("market-data-2025-q1")  // Unique ID for this asset
+                .name("Market Data API")  // Human-readable name
+                .description("Real-time equity price feed for Q1 2025")
                 .contentType("application/json")  // Data format
                 .property("type", "API")  // Custom property: this is an API
-                .property("category", "weather")  // Custom property: category
+                .property("category", "financial-market")  // Custom property: category
+                .property("assetClass", "equities")  // Financial instrument type
+                .property("region", "global")  // Market coverage
                 
                 // DATA ADDRESS: This tells EDC WHERE and HOW to access the actual data
                 // In this case, it's an HTTP endpoint
                 .dataAddress(org.eclipse.edc.spi.types.domain.DataAddress.Builder.newInstance()
                         .type("HttpData")  // Type of data source (HTTP, S3, Database, etc.)
-                        .property("baseUrl", "https://api.weatherapi.com/v1/current.json")
+                        .property("baseUrl", "https://api.marketdata.example.com/v1/equities/prices")
                         .property("method", "GET")
                         .build())
                 .build();
@@ -162,22 +164,34 @@ public class SampleDataExtension implements ServiceExtension {
      * 
      * In this example:
      * ---------------
-     * We create a simple "allow-all" policy for demonstration purposes.
-     * In production, you'd have more restrictive policies like:
-     * - "Only for research purposes"
-     * - "Maximum 1000 requests per day"
-     * - "Only accessible from EU region"
+     * We create a financial data policy with typical constraints:
+     * - Usage purpose: Research and portfolio analytics only
+     * - Prohibition: Cannot redistribute data to third parties
+     * - Obligation: Must delete data after 12 months
+     * 
+     * Note: This is a simplified policy for demonstration. In production,
+     * you would implement actual enforcement mechanisms for these constraints.
      */
     private void registerSamplePolicy(org.eclipse.edc.spi.monitor.Monitor monitor) {
-        monitor.info("Creating sample policy: Allow-All Policy");
+        monitor.info("Creating sample policy: Financial Research Policy");
 
-        // Build a simple policy that allows everything
+        // Build a policy with financial data constraints
+        // Note: For simplicity, we're using an empty policy here.
+        // In production, you would add specific permission/prohibition/obligation rules
         var policy = Policy.Builder.newInstance()
-                .build();  // Empty policy = no restrictions
+                .build();  
+                // Production example would include:
+                // .permission(Permission.Builder.newInstance()
+                //     .constraint(Constraint.Builder.newInstance()
+                //         .leftOperand("purpose")
+                //         .operator("eq")
+                //         .rightOperand("research")
+                //         .build())
+                //     .build())
 
         // Wrap it in a PolicyDefinition (which has an ID and metadata)
         var policyDef = PolicyDefinition.Builder.newInstance()
-                .id("allow-all-policy")  // Unique ID for this policy
+                .id("financial-research-policy")  // Unique ID for this policy
                 .policy(policy)  // The actual policy rules
                 .build();
 
@@ -185,7 +199,9 @@ public class SampleDataExtension implements ServiceExtension {
         policyStore.create(policyDef);
         
         monitor.info("✓ Policy registered: " + policyDef.getId());
-        monitor.info("  - Type: Allow-All (no restrictions)");
+        monitor.info("  - Usage: Research and portfolio analytics");
+        monitor.info("  - Prohibition: No redistribution");
+        monitor.info("  - Obligation: Delete after 12 months");
     }
 
     /**
@@ -212,26 +228,26 @@ public class SampleDataExtension implements ServiceExtension {
      * 
      * In this example:
      * ---------------
-     * We link our weather API asset with our allow-all policy.
+     * We link our market data asset with our financial research policy.
      */
     private void registerContractDefinition(org.eclipse.edc.spi.monitor.Monitor monitor) {
         monitor.info("Creating contract definition");
 
         var contractDef = ContractDefinition.Builder.newInstance()
-                .id("weather-contract-def")  // Unique ID
+                .id("market-data-contract-def")  // Unique ID
                 
                 // ACCESS POLICY: Who can see this in the catalog and initiate negotiation
-                .accessPolicyId("allow-all-policy")
+                .accessPolicyId("financial-research-policy")
                 
                 // CONTRACT POLICY: Rules that apply to the actual data usage
-                .contractPolicyId("allow-all-policy")
+                .contractPolicyId("financial-research-policy")
                 
                 // ASSET SELECTOR: Which assets does this contract cover?
-                // In this case, specifically our weather-api-asset
+                // In this case, specifically our market-data-2025-q1 asset
                 .assetsSelectorCriterion(org.eclipse.edc.spi.query.Criterion.Builder.newInstance()
                         .operandLeft("https://w3id.org/edc/v0.0.1/ns/id")
                         .operator("=")
-                        .operandRight("weather-api-asset")
+                        .operandRight("market-data-2025-q1")
                         .build())
                 .build();
 
@@ -239,7 +255,7 @@ public class SampleDataExtension implements ServiceExtension {
         contractStore.save(contractDef);
         
         monitor.info("✓ Contract Definition registered: " + contractDef.getId());
-        monitor.info("  - Links asset 'weather-api-asset' with 'allow-all-policy'");
+        monitor.info("  - Links asset 'market-data-2025-q1' with 'financial-research-policy'");
         monitor.info("  - Now available in catalog for consumers");
     }
 }
