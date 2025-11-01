@@ -97,20 +97,20 @@ The **EDC Connector** is the runtime application that:
 ┌─────────────────────────────────────────────────────────┐
 │              EDC Connector (This Project)               │
 ├─────────────────────────────────────────────────────────┤
-│                                                          │
-│  ┌────────────────────────────────────────────┐        │
-│  │     SampleDataExtension.java              │        │
-│  │  (Registers financial market data)         │        │
-│  └────────────────────────────────────────────┘        │
-│                      │                                   │
-│                      ▼                                   │
-│  ┌─────────────┐  ┌──────────────┐  ┌──────────────┐  │
-│  │ AssetIndex  │  │ PolicyStore  │  │ ContractStore│  │
-│  │ (In-Memory) │  │ (In-Memory)  │  │ (In-Memory)  │  │
-│  └─────────────┘  └──────────────┘  └──────────────┘  │
-│                                                          │
+│                                                         │
+│  ┌────────────────────────────────────────────┐         │
+│  │     SampleDataExtension.java               │         │
+│  │  (Registers financial market data)         │         │
+│  └────────────────────────────────────────────┘         │
+│                      │                                  │
+│                      ▼                                  │
+│  ┌─────────────┐  ┌──────────────┐  ┌──────────────┐    │
+│  │ AssetIndex  │  │ PolicyStore  │  │ ContractStore│    │
+│  │ (In-Memory) │  │ (In-Memory)  │  │ (In-Memory)  │    │
+│  └─────────────┘  └──────────────┘  └──────────────┘    │
+│                                                         │
 ├─────────────────────────────────────────────────────────┤
-│                    HTTP APIs                             │
+│                    HTTP APIs                            │
 ├─────────────────────────────────────────────────────────┤
 │  • Management API (8181)  - CRUD operations             │
 │  • Public API (8080)      - Data access                 │
