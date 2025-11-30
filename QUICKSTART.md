@@ -5,7 +5,7 @@
 ### Step 1: Build the Project (1 minute)
 
 ```powershell
-cd c:\_dev\workspace0\eclipseDataspaceComponents
+cd c:\_dev\workspace0\edc-minimal-poc
 mvn clean package
 ```
 
@@ -17,8 +17,18 @@ You'll see:
 
 ### Step 2: Run the Connector (30 seconds)
 
+**Option A: Single Connector**
 ```powershell
 java -jar target/edc-minimal-poc-1.0.0.jar
+```
+
+**Option B: Two Connectors (Provider + Consumer)**
+```powershell
+# Terminal 1
+.\run-provider.ps1
+
+# Terminal 2
+.\run-consumer.ps1
 ```
 
 Wait for:
@@ -61,7 +71,20 @@ You now have:
 - ✅ A "financial-research-policy" with usage constraints
 - ✅ A contract definition linking them
 
-### Step 5: Explore the Code (As long as you want!)
+### Step 5: Try Two-Connector Mode (2 minutes)
+
+If you ran two connectors, test the catalog query:
+
+```powershell
+# Terminal 3
+.\test-catalog-query.ps1
+```
+
+This demonstrates the core dataspace interaction:
+- Consumer discovers Provider's available data
+- Uses DSP protocol for connector-to-connector communication
+
+### Step 6: Explore the Code (As long as you want!)
 
 1. Open `src/main/java/com/example/edc/MinimalEdcConnector.java`
    - See how the connector starts
@@ -69,7 +92,7 @@ You now have:
 2. Open `src/main/java/com/example/edc/extension/SampleDataExtension.java`
    - See how assets, policies, and contracts are created
 
-3. Open `config.properties`
+3. Open `provider-connector.properties` or `consumer-connector.properties`
    - See all configuration options
 
 4. Read `README.md` for detailed explanations
@@ -153,8 +176,9 @@ See [TESTING.md](TESTING.md) for complete testing guide.
 ## 🎓 Next Learning Steps
 
 1. ✅ You've completed: Running a basic connector
-2. 📖 Next: Read the full [README.md](README.md) to understand concepts
-3. 🔧 Then: Modify the sample extension
-4. 🚀 Finally: Set up two connectors and test contract negotiation
+2. ✅ You've completed: Running two connectors with catalog query
+3. 📖 Next: Read the full [README.md](README.md) to understand concepts
+4. 🔧 Then: Modify the sample extension
+5. 🚀 Finally: Implement contract negotiation and data transfer
 
 **Congratulations! You're now an EDC beginner!** 🎉

@@ -98,10 +98,16 @@ A formal agreement between data provider and consumer that specifies:
 ## 🏗️ Project Structure
 
 ```
-eclipseDataspaceComponents/
-├── pom.xml                          # Maven configuration with EDC dependencies
-├── config.properties                # Connector configuration (ports, settings)
-├── README.md                        # This file
+edc-minimal-poc/
+├── pom.xml                              # Maven configuration with EDC dependencies
+├── dataspaceconnector-configuration.properties  # Single connector config
+├── provider-connector.properties        # Provider connector config (ports 8xxx)
+├── consumer-connector.properties        # Consumer connector config (ports 9xxx)
+├── run-provider.ps1                     # Start Provider connector script
+├── run-consumer.ps1                     # Start Consumer connector script
+├── test-api.ps1                         # Quick API test script
+├── test-catalog-query.ps1               # Two-connector catalog query test
+├── README.md                            # This file
 │
 └── src/main/
     ├── java/com/example/edc/
@@ -127,7 +133,7 @@ eclipseDataspaceComponents/
 
 ```powershell
 # Navigate to project directory
-cd c:\_dev\workspace0\eclipseDataspaceComponents
+cd c:\_dev\workspace0\edc-minimal-poc
 
 # Clean and build
 mvn clean package
@@ -138,9 +144,21 @@ mvn clean package
 
 ### Running the Connector
 
+#### Option A: Single Connector Mode
+
 ```powershell
 # Run the connector
 java -jar target/edc-minimal-poc-1.0.0.jar
+```
+
+#### Option B: Two-Connector Mode (Provider + Consumer)
+
+```powershell
+# Terminal 1: Start Provider
+.\run-provider.ps1
+
+# Terminal 2: Start Consumer
+.\run-consumer.ps1
 ```
 
 The connector will start and display:
@@ -164,6 +182,13 @@ Available endpoints:
 - DSP Protocol: http://localhost:8282/api/dsp
 - IDS Protocol: http://localhost:8383/api/v1/ids
 ```
+
+### Port Reference
+
+| Connector | Management API | DSP Protocol | Public API |
+|-----------|----------------|--------------|------------|
+| Single/Provider | 8181 | 8282 | 8080 |
+| Consumer | 9181 | 9282 | 9080 |
 
 ## 🧪 Testing the Connector
 
@@ -210,19 +235,28 @@ Invoke-RestMethod -Uri "http://localhost:8181/api/management/v3/policydefinition
 Invoke-RestMethod -Uri "http://localhost:8181/api/management/v3/contractdefinitions/market-data-contract-def" -Method GET
 ```
 
-### 3. Request Catalog
+### 3. Request Catalog (Two-Connector Mode)
 
-See what assets are available for sharing:
+In two-connector mode, the Consumer queries the Provider's catalog:
 
 ```powershell
-# Request catalog (replace localhost with actual connector URL if different)
-curl -X POST http://localhost:8181/api/management/v3/catalog/request `
-  -H "Content-Type: application/json" `
-  -d '{
-    "@context": {},
-    "counterPartyAddress": "http://localhost:8282/api/dsp",
-    "protocol": "dataspace-protocol-http"
-  }'
+# Run the catalog query test (requires both connectors running)
+.\test-catalog-query.ps1
+```
+
+Or manually via API:
+
+```powershell
+# Consumer requests Provider's catalog
+$body = @{
+    "@context" = @{ "edc" = "https://w3id.org/edc/v0.0.1/ns/" }
+    "@type" = "CatalogRequest"
+    "counterPartyAddress" = "http://localhost:8282/api/dsp"
+    "protocol" = "dataspace-protocol-http"
+} | ConvertTo-Json -Depth 10
+
+Invoke-RestMethod -Uri "http://localhost:9181/api/management/v3/catalog/request" `
+    -Method POST -ContentType "application/json" -Body $body
 ```
 
 ### 4. Create Your Own Asset (Optional)
@@ -276,6 +310,11 @@ This file configures:
 - Storage backends (in-memory for this PoC)
 - Transfer settings
 
+Configuration files:
+- `dataspaceconnector-configuration.properties` - Single connector mode
+- `provider-connector.properties` - Provider config (ports 8xxx)
+- `consumer-connector.properties` - Consumer config (ports 9xxx)
+
 **Key takeaway**: EDC is highly configurable through properties files, environment variables, or system properties.
 
 ## 🎓 Learning Path
@@ -285,7 +324,7 @@ This file configures:
 1. **Start here**: Run the connector and explore the Management API
 2. **Next**: Read `SampleDataExtension.java` to understand assets, policies, and contracts
 3. **Then**: Try creating your own asset via the API
-4. **Finally**: Set up a second connector and practice negotiating contracts between them
+4. **Advanced**: Run two connectors and test catalog queries between them
 
 ### Key EDC Concepts to Master:
 
@@ -387,7 +426,12 @@ This project uses Eclipse Dataspace Components, which is licensed under Apache L
 A: EDC focuses on **data sovereignty** - keeping control of your data even when sharing it. Unlike traditional APIs or file sharing, EDC enforces policies and tracks usage.
 
 **Q: Do I need two connectors to test?**
-A: Not initially. This PoC lets you explore one connector. For full testing (negotiations, transfers), you'd run two instances with different configs.
+A: Not initially. This PoC lets you explore one connector with `java -jar target/edc-minimal-poc-1.0.0.jar`. For full dataspace testing (catalog queries, negotiations), run two connectors:
+```powershell
+.\run-provider.ps1   # Terminal 1
+.\run-consumer.ps1   # Terminal 2
+.\test-catalog-query.ps1  # Terminal 3
+```
 
 **Q: Is this production-ready?**
 A: No! This uses in-memory storage and simple policies. For production:

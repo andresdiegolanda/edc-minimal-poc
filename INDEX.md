@@ -65,8 +65,18 @@ Welcome to the complete documentation for the EDC Minimal Proof of Concept!
 | **MinimalEdcConnector.java** | Main entry point | 🟢🟢🟢🟢🟢 Extensive |
 | **SampleDataExtension.java** | Creates sample data | 🟢🟢🟢🟢🟢 Extensive |
 | **pom.xml** | Build configuration | 🟢🟢🟢🟢⚪ Well-commented |
-| **config.properties** | Connector settings | 🟢🟢🟢🟢🟢 Extensive |
+| **provider-connector.properties** | Provider config | 🟢🟢🟢🟢🟢 Extensive |
+| **consumer-connector.properties** | Consumer config | 🟢🟢🟢🟢🟢 Extensive |
 | **logback.xml** | Logging setup | 🟢🟢🟢⚪⚪ Basic |
+
+### Scripts
+
+| File | What It Does |
+|------|--------------|
+| **run-provider.ps1** | Start Provider connector |
+| **run-consumer.ps1** | Start Consumer connector |
+| **test-api.ps1** | Quick API tests |
+| **test-catalog-query.ps1** | Two-connector catalog query test |
 
 ## 🎓 Learning Paths
 
@@ -168,8 +178,14 @@ ACHIEVEMENT UNLOCKED: EDC Architect! 🏛️
 - HOW_IT_WORKS.md → "Extension Loading Process"
 
 **Configuration**
-- config.properties → Complete file
+- provider-connector.properties → Provider config
+- consumer-connector.properties → Consumer config
 - HOW_IT_WORKS.md → "Configuration Loading"
+
+**Two-Connector Setup**
+- COMMANDS.md → "Two-Connector Mode" section
+- NEXT_STEPS.md → Implementation status
+- test-catalog-query.ps1 → Catalog query test
 
 **Architecture**
 - README.md → "How EDC Works"
@@ -195,7 +211,10 @@ ACHIEVEMENT UNLOCKED: EDC Architect! 🏛️
 ### Common Questions & Where to Find Answers
 
 **Q: How do I run the connector?**  
-A: [QUICKSTART.md](QUICKSTART.md) → "Step 1: Build the Project"
+A: [QUICKSTART.md](QUICKSTART.md) → "Step 2: Run the Connector" or [COMMANDS.md](COMMANDS.md)
+
+**Q: How do I run two connectors?**  
+A: [COMMANDS.md](COMMANDS.md) → "Two-Connector Mode"
 
 **Q: What is a data space?**  
 A: [README.md](README.md) → "Key Concepts → Data Space"
@@ -204,7 +223,10 @@ A: [README.md](README.md) → "Key Concepts → Data Space"
 A: [SampleDataExtension.java](src/main/java/com/example/edc/extension/SampleDataExtension.java) → `registerSampleAsset()`
 
 **Q: How do I test the APIs?**  
-A: [README.md](README.md) → "Testing the Connector"
+A: [README.md](README.md) → "Testing the Connector" or run `.\test-api.ps1`
+
+**Q: How do I test catalog query between connectors?**  
+A: Run `.\test-catalog-query.ps1` (requires both connectors running)
 
 **Q: What happens during startup?**  
 A: [HOW_IT_WORKS.md](HOW_IT_WORKS.md) → "Startup Sequence"
@@ -234,9 +256,13 @@ A: [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) → "Troubleshooting"
 
 2. **View the sample asset**
    - Guide: QUICKSTART.md → "Test 2"
-   - Command: `curl http://localhost:8181/api/management/v3/assets`
+   - Command: `Invoke-RestMethod -Uri "http://localhost:8181/api/management/v3/assets" -Method GET`
 
-3. **Change the asset name**
+3. **Test catalog query (two connectors)**
+   - Guide: COMMANDS.md → "Two-Connector Mode"
+   - Scripts: `.\run-provider.ps1`, `.\run-consumer.ps1`, `.\test-catalog-query.ps1`
+
+4. **Change the asset name**
    - File: SampleDataExtension.java
    - Method: `registerSampleAsset()`
    - Rebuild and test
