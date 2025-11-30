@@ -186,7 +186,7 @@ ContractDefinition contract = ContractDefinition.Builder.newInstance()
 
 **Analogy**: Like a librarian cataloging books when the library opens.
 
-### 3. `src/test/java/com/example/edc/EdcManagementApiTest.java`
+### 3. `src/test/java/com/example/edc/EdcManagementApiIT.java`
 
 **Purpose**: Integration tests that verify the connector works correctly.
 
@@ -197,6 +197,8 @@ ContractDefinition contract = ContractDefinition.Builder.newInstance()
 - ✅ Contract definitions link correctly
 - ✅ New assets can be created
 - ✅ Error handling works (404 for non-existent assets)
+
+**How to run**: `mvn verify` (requires running connector)
 
 **Analogy**: Like a quality inspector checking every feature before product release.
 

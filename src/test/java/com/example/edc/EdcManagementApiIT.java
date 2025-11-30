@@ -65,7 +65,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("EDC Management API Integration Tests")
-class EdcManagementApiTest {
+class EdcManagementApiIT {
 
     // =============================================================================
     // TEST CONFIGURATION

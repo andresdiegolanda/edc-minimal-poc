@@ -166,18 +166,29 @@
                 </configuration>
             </plugin>
 
-            <!-- Maven Surefire Plugin - Runs unit tests -->
+            <!-- Maven Surefire Plugin - Runs unit tests during 'mvn test' -->
+            <!-- Unit tests: *Test.java (none in this project yet) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.2</version>
                 <configuration>
-                    <!-- Skip unit tests (we only have integration tests) -->
-                    <skip>true</skip>
+                    <!-- Exclude integration tests (they end with IT.java) -->
+                    <excludes>
+                        <exclude>**/*IT.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
 
-            <!-- Integration tests run separately with mvn verify -->
+            <!-- 
+                Maven Failsafe Plugin - Runs integration tests during 'mvn verify'
+                Integration tests: *IT.java (requires running EDC connector)
+                
+                Usage:
+                  mvn package          -> Builds JAR, skips integration tests
+                  mvn verify           -> Builds JAR + runs integration tests
+                  mvn verify -DskipITs -> Builds JAR, explicitly skips integration tests
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -191,9 +202,9 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <!-- Integration tests require running connector -->
+                    <!-- Integration tests require running connector on localhost:8181 -->
                     <includes>
-                        <include>**/*Test.java</include>
+                        <include>**/*IT.java</include>
                     </includes>
                 </configuration>
             </plugin>

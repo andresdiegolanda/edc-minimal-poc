@@ -70,7 +70,7 @@ The project now demonstrates how financial market data can be shared with policy
    - Changed example command from `weather-api-asset` to `market-data-2025-q1`
 
 ### Test Files
-3. **EdcManagementApiTest.java**
+3. **EdcManagementApiIT.java**
    - Renamed test method: `testGetWeatherAsset()` → `testGetMarketDataAsset()`
    - Updated all test assertions for new asset ID
    - Updated policy test: `allow-all-policy` → `financial-research-policy`
@@ -145,11 +145,11 @@ Updated labels:
 
 ### Test Execution Commands
 ```powershell
-# Run all tests
-mvn test -DskipTests=false
+# Run all integration tests
+mvn verify
 
 # Run single test
-mvn test -DskipTests=false -Dtest=EdcManagementApiTest#testGetMarketDataAsset
+mvn verify -Dit.test=EdcManagementApiIT#testGetMarketDataAsset
 
 # Run PowerShell script
 .\test-api.ps1
@@ -199,7 +199,7 @@ If running connector with previous data:
 
 4. **Run Tests**
    ```powershell
-   mvn test -DskipTests=false
+   mvn verify
    ```
 
 Expected: All 6 tests pass ✅

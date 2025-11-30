@@ -48,7 +48,7 @@ Available endpoints:
 
 ```powershell
 # Run all integration tests
-mvn test -DskipTests=false
+mvn verify
 ```
 
 **Expected Output:**
@@ -107,7 +107,7 @@ mvn verify
 | **Build** | `mvn clean package` (skips tests) |
 | **Run Connector** | `java -jar target/edc-minimal-poc-1.0.0.jar` |
 | **Run Integration Tests** | `mvn verify` |
-| **Run Single Test** | `mvn verify -Dit.test=EdcManagementApiTest#testGetMarketDataAsset` |
+| **Run Single Test** | `mvn verify -Dit.test=EdcManagementApiIT#testGetMarketDataAsset` |
 | **Quick Manual Test** | `.\test-api.ps1` |
 | **Stop Connector** | `Ctrl+C` in the connector terminal |
 
@@ -185,7 +185,7 @@ mvn clean package -DskipTests
 ```
 
 **Run tests in IntelliJ/Eclipse:**
-- Right-click `EdcManagementApiTest.java` → Run Tests
+- Right-click `EdcManagementApiIT.java` → Run Tests
 
 ---
 

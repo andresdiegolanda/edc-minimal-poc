@@ -2,7 +2,7 @@
 
 ## Overview
 
-This test suite (`EdcManagementApiTest.java`) provides comprehensive integration testing for the Eclipse Dataspace Components (EDC) Management API. It's designed as both a testing tool AND an educational resource for learning how to interact with EDC programmatically.
+This test suite (`EdcManagementApiIT.java`) provides comprehensive integration testing for the Eclipse Dataspace Components (EDC) Management API. It's designed as both a testing tool AND an educational resource for learning how to interact with EDC programmatically.
 
 ---
 
@@ -162,23 +162,23 @@ EDC Connector Started Successfully!
 ### Method 1: Run All Tests via Maven
 
 ```powershell
-# Terminal 2: Run tests
-mvn test -DskipTests=false
+# Terminal 2: Run integration tests
+mvn verify
 ```
 
-**Note**: Tests are skipped by default (requires running connector). Use `-DskipTests=false` to run them.
+**Note**: Integration tests run during the `verify` phase and require a running connector.
 
 ### Method 2: Run All Tests via IDE
 
-1. Open `EdcManagementApiTest.java` in your IDE
+1. Open `EdcManagementApiIT.java` in your IDE
 2. Right-click on the class name
-3. Select "Run Tests" or "Run 'EdcManagementApiTest'"
+3. Select "Run Tests" or "Run 'EdcManagementApiIT'"
 
 ### Method 3: Run Single Test
 
 ```powershell
 # Run just one specific test
-mvn test -DskipTests=false -Dtest=EdcManagementApiTest#testGetWeatherAsset
+mvn verify -Dit.test=EdcManagementApiIT#testGetMarketDataAsset
 ```
 
 Or in your IDE:
@@ -188,7 +188,7 @@ Or in your IDE:
 ### Method 4: Run with Detailed Output
 
 ```powershell
-mvn test -DskipTests=false -X
+mvn verify -X
 ```
 
 The `-X` flag shows DEBUG output, including full HTTP requests/responses.
@@ -256,7 +256,7 @@ All Tests Completed
 
 ```
 java.net.ConnectException: Connection refused: connect
-	at EdcManagementApiTest.testConnectorHealth(EdcManagementApiTest.java:195)
+	at EdcManagementApiIT.testConnectorHealth(EdcManagementApiIT.java:195)
 
 [ERROR] Tests run: 6, Failures: 0, Errors: 1, Skipped: 5
 ```
@@ -271,7 +271,7 @@ java.net.ConnectException: Connection refused: connect
 
 ```java
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)  // Run tests in order
-public class EdcManagementApiTest {
+class EdcManagementApiIT {
     
     @BeforeAll  // Runs once before all tests
     static void setup() {
@@ -434,10 +434,10 @@ mvn clean install
 - Contracts: `/v2/contractdefinitions`
 
 ### "Tests are skipped"
-**Problem**: Default configuration skips tests  
-**Solution**: Use `-DskipTests=false`:
+**Problem**: Running `mvn test` instead of `mvn verify`  
+**Solution**: Integration tests run during the `verify` phase:
 ```powershell
-mvn test -DskipTests=false
+mvn verify
 ```
 
 ### "JSON parsing error"
@@ -484,7 +484,7 @@ System.out.println("Response: " + response.body());
 - [Jackson Documentation](https://github.com/FasterXML/jackson-docs)
 
 ### Project Files
-- `EdcManagementApiTest.java` - The test class
+- `EdcManagementApiIT.java` - The integration test class
 - `SampleDataExtension.java` - Creates test data
 - `MinimalEdcConnector.java` - Main connector class
 - `README.md` - Comprehensive project documentation

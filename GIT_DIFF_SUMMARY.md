@@ -7,7 +7,7 @@ modified:   README.md
 modified:   QUICKSTART.md
 modified:   src/main/java/com/example/edc/MinimalEdcConnector.java
 modified:   src/main/java/com/example/edc/extension/SampleDataExtension.java
-modified:   src/test/java/com/example/edc/EdcManagementApiTest.java
+renamed:    src/test/java/com/example/edc/EdcManagementApiTest.java -> EdcManagementApiIT.java
 modified:   test-api.ps1
 new file:   MIGRATION_SUMMARY.md
 ```
@@ -60,7 +60,7 @@ new file:   MIGRATION_SUMMARY.md
 +    System.out.println("  Invoke-RestMethod -Uri 'http://localhost:8181/api/management/v3/assets/market-data-2025-q1'");
 ```
 
-### src/test/java/com/example/edc/EdcManagementApiTest.java
+### src/test/java/com/example/edc/EdcManagementApiIT.java
 ```diff
 @@ Test Method Names @@
 -    void testGetWeatherAsset() throws Exception {
