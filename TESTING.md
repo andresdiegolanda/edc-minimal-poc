@@ -430,8 +430,8 @@ mvn clean install
 **Problem**: Using wrong API version or path  
 **Solution**: Check the Management API documentation:
 - Assets: `/v3/assets`
-- Policies: `/v2/policydefinitions`
-- Contracts: `/v2/contractdefinitions`
+- Policies: `/v3/policydefinitions`
+- Contracts: `/v3/contractdefinitions`
 
 ### "Tests are skipped"
 **Problem**: Running `mvn test` instead of `mvn verify`  

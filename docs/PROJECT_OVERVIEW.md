@@ -256,13 +256,13 @@ You should see log output indicating:
 **Option B: Manual Testing**
 ```bash
 # Get the financial asset
-curl http://localhost:8181/management/v3/assets/market-data-2025-q1
+curl http://localhost:8181/api/management/v3/assets/market-data-2025-q1
 
 # Get the policy
-curl http://localhost:8181/management/v3/policydefinitions/financial-research-policy
+curl http://localhost:8181/api/management/v3/policydefinitions/financial-research-policy
 
 # Get the contract definition
-curl http://localhost:8181/management/v3/contractdefinitions/market-data-contract-def
+curl http://localhost:8181/api/management/v3/contractdefinitions/market-data-contract-def
 ```
 
 #### 4. Run Integration Tests
@@ -284,25 +284,25 @@ This runs all 6 integration tests to verify the connector works correctly.
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/management/v3/assets` | GET | List all assets |
-| `/management/v3/assets/{id}` | GET | Get specific asset |
-| `/management/v3/assets` | POST | Create new asset |
-| `/management/v3/policydefinitions` | GET | List all policies |
-| `/management/v3/policydefinitions/{id}` | GET | Get specific policy |
-| `/management/v3/contractdefinitions` | GET | List all contracts |
-| `/management/v3/contractdefinitions/{id}` | GET | Get specific contract |
+| `/api/management/v3/assets` | GET | List all assets |
+| `/api/management/v3/assets/{id}` | GET | Get specific asset |
+| `/api/management/v3/assets` | POST | Create new asset |
+| `/api/management/v3/policydefinitions` | GET | List all policies |
+| `/api/management/v3/policydefinitions/{id}` | GET | Get specific policy |
+| `/api/management/v3/contractdefinitions` | GET | List all contracts |
+| `/api/management/v3/contractdefinitions/{id}` | GET | Get specific contract |
 
 ### Example Requests
 
 **Get Asset:**
 ```bash
-curl -X GET http://localhost:8181/management/v3/assets/market-data-2025-q1 \
+curl -X GET http://localhost:8181/api/management/v3/assets/market-data-2025-q1 \
   -H "Content-Type: application/json"
 ```
 
 **Create Asset:**
 ```bash
-curl -X POST http://localhost:8181/management/v3/assets \
+curl -X POST http://localhost:8181/api/management/v3/assets \
   -H "Content-Type: application/json" \
   -d '{
     "@context": {"@vocab": "https://w3id.org/edc/v0.0.1/ns/"},
@@ -467,7 +467,7 @@ java -Dedc.log.level=DEBUG -jar target/edc-minimal-poc-1.0.0.jar
 
 **Check API Availability:**
 ```bash
-curl http://localhost:8181/management/v3/assets
+curl http://localhost:8181/api/management/v3/assets
 ```
 
 **Verify Build Success:**
