@@ -56,7 +56,7 @@ mvn verify
 → Running: 1. Connector Health Check - Is EDC running?
    ✓ Connector is responding!
 
-→ Running: 2. GET Asset - Retrieve weather-api-asset
+→ Running: 2. GET Asset - Retrieve market-data-2025-q1
    ✓ Asset retrieved and validated successfully!
 
 ...
@@ -73,7 +73,7 @@ Instead of the full test suite, you can quickly verify with PowerShell:
 
 ```powershell
 # Test the API manually (Terminal 2)
-Invoke-RestMethod -Uri "http://localhost:8181/api/management/v3/assets/weather-api-asset" -Method GET
+Invoke-RestMethod -Uri "http://localhost:8181/api/management/v3/assets/market-data-2025-q1" -Method GET
 ```
 
 **Or use the test script:**

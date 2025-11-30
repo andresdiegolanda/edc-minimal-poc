@@ -94,30 +94,30 @@ The **EDC Connector** is the runtime application that:
 ### Component Overview
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│              EDC Connector (This Project)               │
-├─────────────────────────────────────────────────────────┤
-│                                                         │
-│  ┌────────────────────────────────────────────┐         │
-│  │     SampleDataExtension.java               │         │
-│  │  (Registers financial market data)         │         │
-│  └────────────────────────────────────────────┘         │
-│                      │                                  │
-│                      ▼                                  │
-│  ┌─────────────┐  ┌──────────────┐  ┌──────────────┐    │
-│  │ AssetIndex  │  │ PolicyStore  │  │ ContractStore│    │
-│  │ (In-Memory) │  │ (In-Memory)  │  │ (In-Memory)  │    │
-│  └─────────────┘  └──────────────┘  └──────────────┘    │
-│                                                         │
-├─────────────────────────────────────────────────────────┤
-│                    HTTP APIs                            │
-├─────────────────────────────────────────────────────────┤
-│  • Management API (8181)  - CRUD operations             │
-│  • Public API (8080)      - Data access                 │
-│  • Protocol API (8282)    - Connector-to-connector      │
-│  • IDS API (8383)         - IDS protocol support        │
-│  • Control API (9191)     - Admin operations            │
-└─────────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────┐
+│                EDC Connector (This Project)                   │
+├───────────────────────────────────────────────────────────────┤
+│                                                               │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │               SampleDataExtension.java                  │  │
+│  │            (Registers financial market data)            │  │
+│  └─────────────────────────────────────────────────────────┘  │
+│                            │                                  │
+│                            ▼                                  │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌───────────────┐  │
+│  │   AssetIndex    │  │   PolicyStore   │  │ ContractStore │  │
+│  │   (In-Memory)   │  │   (In-Memory)   │  │  (In-Memory)  │  │
+│  └─────────────────┘  └─────────────────┘  └───────────────┘  │
+│                                                               │
+├───────────────────────────────────────────────────────────────┤
+│                         HTTP APIs                             │
+├───────────────────────────────────────────────────────────────┤
+│  • Management API (8181)  - CRUD operations                   │
+│  • Public API (8080)      - Data access                       │
+│  • Protocol API (8282)    - Connector-to-connector            │
+│  • IDS API (8383)         - IDS protocol support              │
+│  • Control API (9191)     - Admin operations                  │
+└───────────────────────────────────────────────────────────────┘
 ```
 
 ![Detailed Architecture](diagrams/detailed-architecture.png)

@@ -37,24 +37,24 @@ This test suite (`EdcManagementApiIT.java`) provides comprehensive integration t
 
 ---
 
-### Test 2: GET Weather Asset
-**Purpose**: Retrieve the sample `weather-api-asset`  
+### Test 2: GET Market Data Asset
+**Purpose**: Retrieve the sample `market-data-2025-q1`  
 **What it tests**:
 - Asset retrieval via GET request
 - JSON-LD response parsing
 - Asset structure validation
 - Property verification (name, description, type)
 
-**API Used**: `GET /v3/assets/weather-api-asset`
+**API Used**: `GET /v3/assets/market-data-2025-q1`
 
 **Expected Response**:
 ```json
 {
-  "@id": "weather-api-asset",
+  "@id": "market-data-2025-q1",
   "@type": "Asset",
   "properties": {
-    "name": "Public Weather API",
-    "description": "Provides current weather data...",
+    "name": "Market Data API",
+    "description": "Real-time equity price feed for Q1 2025",
     "contenttype": "application/json"
   },
   "dataAddress": {
@@ -66,27 +66,27 @@ This test suite (`EdcManagementApiIT.java`) provides comprehensive integration t
 
 ---
 
-### Test 3: GET Allow-All Policy
-**Purpose**: Retrieve the sample `allow-all-policy`  
+### Test 3: GET Financial Research Policy
+**Purpose**: Retrieve the sample `financial-research-policy`  
 **What it tests**:
 - Policy retrieval via GET request
 - Policy structure validation
 - Policy type verification
 
-**API Used**: `GET /v2/policydefinitions/allow-all-policy`
+**API Used**: `GET /v3/policydefinitions/financial-research-policy`
 
-**Key Learning**: Policies define rules for data access. The "allow-all" policy has no restrictions, which is useful for demos but not production.
+**Key Learning**: Policies define rules for data access. The "financial-research-policy" restricts usage to research purposes.
 
 ---
 
 ### Test 4: GET Contract Definition
-**Purpose**: Retrieve the `weather-contract-def`  
+**Purpose**: Retrieve the `market-data-contract-def`  
 **What it tests**:
 - Contract definition retrieval
 - Policy linkage verification
 - Asset-to-policy binding
 
-**API Used**: `GET /v2/contractdefinitions/weather-contract-def`
+**API Used**: `GET /v3/contractdefinitions/market-data-contract-def`
 
 **Key Learning**: Contract definitions link assets with policies. They represent "offers" in the data space catalog.
 
@@ -212,23 +212,23 @@ Starting EDC Management API Tests
    Response Status: 200
    ✓ Connector is responding!
 
-→ Running: 2. GET Asset - Retrieve weather-api-asset
-   Retrieving weather-api-asset...
+→ Running: 2. GET Asset - Retrieve market-data-2025-q1
+   Retrieving market-data-2025-q1...
    Status: 200
    Response Body: {...}
-   Asset Name: Public Weather API
+   Asset Name: Market Data API
    ✓ Asset retrieved and validated successfully!
 
-→ Running: 3. GET Policy - Retrieve allow-all-policy
-   Retrieving allow-all-policy...
+→ Running: 3. GET Policy - Retrieve financial-research-policy
+   Retrieving financial-research-policy...
    Status: 200
    ✓ Policy retrieved and validated successfully!
 
-→ Running: 4. GET Contract Definition - Retrieve weather-contract-def
-   Retrieving weather-contract-def...
+→ Running: 4. GET Contract Definition - Retrieve market-data-contract-def
+   Retrieving market-data-contract-def...
    Status: 200
-   Access Policy: allow-all-policy
-   Contract Policy: allow-all-policy
+   Access Policy: financial-research-policy
+   Contract Policy: financial-research-policy
    ✓ Contract definition retrieved and validated!
 
 → Running: 5. POST Asset - Create a new test asset

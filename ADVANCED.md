@@ -5,33 +5,33 @@
 ### The Big Picture
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    EDC CONNECTOR                         │
+┌──────────────────────────────────────────────────────────┐
+│                       EDC CONNECTOR                      │
 │                                                          │
-│  ┌────────────────────┐      ┌────────────────────┐   │
-│  │   CONTROL PLANE    │      │    DATA PLANE      │   │
-│  │                    │      │                    │   │
-│  │  • Asset Index     │      │  • Data Transfer   │   │
-│  │  • Policy Store    │◄────►│  • Transformation  │   │
-│  │  • Contract Store  │      │  • Streaming       │   │
-│  │  • Negotiation     │      │                    │   │
-│  └────────────────────┘      └────────────────────┘   │
-│           ▲                           ▲                │
-│           │                           │                │
-│  ┌────────┴──────────┐       ┌────────┴──────────┐   │
-│  │  Management API   │       │   Public API      │   │
-│  │  (Port 8181)      │       │   (Port 8080)     │   │
-│  └───────────────────┘       └───────────────────┘   │
-│           ▲                                            │
-│           │                                            │
-└───────────┼────────────────────────────────────────────┘
+│  ┌────────────────────┐      ┌────────────────────┐      │
+│  │   CONTROL PLANE    │      │     DATA PLANE     │      │
+│  │                    │      │                    │      │
+│  │  • Asset Index     │      │  • Data Transfer   │      │
+│  │  • Policy Store    │◄────►│  • Transformation  │      │
+│  │  • Contract Store  │      │  • Streaming       │      │
+│  │  • Negotiation     │      │                    │      │
+│  └────────────────────┘      └────────────────────┘      │
+│           ▲                           ▲                  │
+│           │                           │                  │
+│  ┌────────┴───────────┐      ┌────────┴───────────┐      │
+│  │   Management API   │      │     Public API     │      │
+│  │    (Port 8181)     │      │    (Port 8080)     │      │
+│  └────────────────────┘      └────────────────────┘      │
+│           ▲                                              │
+│           │                                              │
+└───────────┼──────────────────────────────────────────────┘
             │
             │ HTTP/REST
             │
      ┌──────┴───────┐
-     │   Admin/     │
+     │    Admin/    │
      │   Internal   │
-     │   Systems    │
+     │    Systems   │
      └──────────────┘
 ```
 
@@ -417,7 +417,7 @@ void testAssetCreation() {
     
     var assets = assetIndex.queryAssets(QuerySpec.none());
     assertThat(assets).hasSize(1);
-    assertThat(assets.get(0).getId()).isEqualTo("weather-api-asset");
+    assertThat(assets.get(0).getId()).isEqualTo("market-data-2025-q1");
 }
 ```
 

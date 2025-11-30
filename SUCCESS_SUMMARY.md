@@ -24,9 +24,9 @@ This project demonstrates a **fully functional minimum viable Eclipse Dataspace 
 ### 3. **Custom Extension Created**
 - ✅ `SampleDataExtension` demonstrates EDC extensibility
 - ✅ Pre-loads sample data on startup:
-  - **Asset**: `weather-api-asset` (Weather API endpoint)
-  - **Policy**: `allow-all-policy` (Unrestricted access)
-  - **Contract Definition**: `weather-contract-def` (Links asset to policy)
+  - **Asset**: `market-data-2025-q1` (Financial market data API)
+  - **Policy**: `financial-research-policy` (Research use only)
+  - **Contract Definition**: `market-data-contract-def` (Links asset to policy)
 
 ### 4. **Configuration Completed**
 - ✅ `dataspaceconnector-configuration.properties` with all required settings
@@ -93,9 +93,9 @@ EDC Connector Started Successfully!
 
 ### Sample Data Loaded
 ```
-INFO ✔ Asset registered: weather-api-asset
-INFO ✔ Policy registered: allow-all-policy
-INFO ✔ Contract Definition registered: weather-contract-def
+INFO ✔ Asset registered: market-data-2025-q1
+INFO ✔ Policy registered: financial-research-policy
+INFO ✔ Contract Definition registered: market-data-contract-def
 ```
 
 ### HTTP Endpoints Active
@@ -191,14 +191,14 @@ Invoke-RestMethod -Uri "http://localhost:8181/api/management/v3/assets" -Method 
 
 ### Testing the Sample Data
 ```powershell
-# Get the weather API asset
-Invoke-RestMethod -Uri "http://localhost:8181/api/management/v3/assets/weather-api-asset" -Method GET
+# Get the market data asset
+Invoke-RestMethod -Uri "http://localhost:8181/api/management/v3/assets/market-data-2025-q1" -Method GET
 
 # List all policies
-Invoke-RestMethod -Uri "http://localhost:8181/api/management/v2/policydefinitions" -Method GET
+Invoke-RestMethod -Uri "http://localhost:8181/api/management/v3/policydefinitions" -Method GET
 
 # List all contract definitions
-Invoke-RestMethod -Uri "http://localhost:8181/api/management/v2/contractdefinitions" -Method GET
+Invoke-RestMethod -Uri "http://localhost:8181/api/management/v3/contractdefinitions" -Method GET
 ```
 
 ---
